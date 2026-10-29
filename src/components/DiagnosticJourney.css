@@ -1,0 +1,43 @@
+.diagnostic-journey {
+  position: absolute;
+  left: calc(var(--panel-width) + 16px);
+  bottom: calc(90px + env(safe-area-inset-bottom));
+  z-index: 1;
+  width: min(340px, calc(100vw - var(--panel-width) - 172px));
+  max-height: min(440px, calc(100dvh - var(--header-height) - 270px));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d7dfd3;
+  border-radius: 12px;
+  background: #fafbf7f5;
+  box-shadow: 0 4px 20px #13281c24;
+}
+
+.diagnostic-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px 18px 12px; }
+.diagnostic-content:focus-visible { outline: 2px solid #7fa846; outline-offset: -3px; border-radius: 10px; }
+.diagnostic-progress { margin: 0 0 8px; color: #53674f; font-size: 11px; font-weight: 650; }
+.diagnostic-content h2 { font-size: 17px; line-height: 1.35; color: #274a36; }
+.diagnostic-text { margin: 10px 0 0; color: #53674f; font-size: 12px; line-height: 1.6; }
+.diagnostic-facts { margin: 12px 0 0; display: grid; gap: 8px; }
+.diagnostic-facts dt { color: #65785b; font-size: 10px; }
+.diagnostic-facts dd { margin: 2px 0 0; font-size: 12px; line-height: 1.4; }
+.diagnostic-references { margin-top: 12px; color: #53674f; font-size: 11px; }
+.diagnostic-references p { margin: 0 0 6px; }
+.diagnostic-references ul { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0; padding-left: 16px; }
+.diagnostic-actions { display: flex; justify-content: space-between; gap: 8px; flex-shrink: 0; padding: 10px 18px; border-top: 1px solid #e0e5db; }
+.diagnostic-actions button { min-height: 36px; padding: 6px 10px; border: 1px solid #cfdcc4; border-radius: 6px; background: #fff; color: #3e5a3c; font-size: 12px; touch-action: manipulation; }
+.diagnostic-actions .diagnostic-next { background: #dfe9d3; border-color: #b6c9a7; font-weight: 650; }
+
+@media (max-width: 760px) {
+  .diagnostic-journey { left: max(12px, env(safe-area-inset-left)); bottom: calc(96px + env(safe-area-inset-bottom)); width: min(460px, calc(100vw - 24px)); max-height: 38dvh; }
+  .diagnostic-content { padding: 12px 14px; }
+  .diagnostic-content h2 { font-size: 15px; }
+  .diagnostic-actions { padding: 8px 12px; }
+  .diagnostic-actions button { min-height: 44px; }
+  .app-shell:has(.raster-legend-stack) .diagnostic-journey { width: min(460px, calc(100vw - 136px)); }
+  .app-shell:has(.layer-panel.is-open) .diagnostic-journey { visibility: hidden; }
+}
+
+@media (max-width: 760px) and (max-height: 620px) {
+  .diagnostic-journey { width: min(460px, calc(100vw - 80px)); }
+}
