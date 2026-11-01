@@ -1,31 +1,9 @@
-.mode-switcher {
-  position: absolute;
-  top: 18px;
-  right: 26px;
-  z-index: 3;
-  display: flex;
-  padding: 3px;
-  border: 1px solid #d7dfd3;
-  border-radius: 9px;
-  background: #fafbf7;
-  box-shadow: 0 2px 8px #13281c12;
-}
-
-.mode-switcher button {
-  min-height: 34px;
-  padding: 0 13px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: #53674f;
-  font-size: 12px;
-  touch-action: manipulation;
-}
-
-.mode-switcher button[aria-pressed="true"] { background: #dfe9d3; color: #274a36; font-weight: 650; }
+/* "Explorar | Diagnóstico" sits in the header actions, as a segmented control. */
+.mode-switcher { display: flex; flex-shrink: 0; padding: 3px; border: 1px solid var(--color-divider); border-radius: 999px; background: var(--color-neutral-100); }
+.mode-switcher button { min-height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: transparent; color: var(--color-neutral-700); font-size: 13px; font-weight: 600; touch-action: manipulation; }
+.mode-switcher button:hover:not([aria-pressed="true"]) { background: var(--color-neutral-200); }
+.mode-switcher button[aria-pressed="true"] { background: var(--color-accent-100); color: var(--color-accent-700); }
 
 @media (max-width: 760px) {
-  .mode-switcher { top: calc(var(--header-height) + 60px); right: auto; left: max(8px, env(safe-area-inset-left)); z-index: 1; }
-  .mode-switcher button { min-height: 44px; padding: 0 12px; }
-  .app-shell:has(.layer-panel.is-open) .mode-switcher { visibility: hidden; }
+  .mode-switcher button { min-height: 38px; padding: 0 10px; font-size: 12px; }
 }

@@ -4,6 +4,7 @@ import { flyToCamera } from "../cesium/projectCamera";
 import { useGeolocation } from "../hooks/useGeolocation";
 import type { NavigationArea } from "../cesium/navigationLimits";
 import type { CameraConfig } from "../projects/types";
+import { Icon } from "./icons";
 import "./NavigationControls.css";
 
 interface NavigationControlsProps {
@@ -86,21 +87,20 @@ export function NavigationControls({ viewer, homeCamera, disabled = false, area 
       <div className="navigation-controls" role="group" aria-label="Navegação do mapa">
         <button className="navigation-compass" type="button" disabled={unavailable} onClick={resetNorth} aria-label="Orientar para o norte" title="Orientar para o norte">
           <span className="navigation-compass-face" ref={compassRef} aria-hidden="true">
-            <span className="navigation-north">N</span>
-            <svg viewBox="0 0 48 48"><path d="M24 16 30 34 24 30 18 34Z" fill="currentColor" /><path d="M24 30 30 34 24 42 18 34Z" fill="currentColor" opacity=".35" /></svg>
+            <Icon name="north" />
           </span>
         </button>
         <div className="navigation-button-stack">
-          <button type="button" disabled={unavailable} onClick={() => zoom(true)} aria-label="Aproximar" title="Aproximar"><span aria-hidden="true">+</span></button>
+          <button className="navigation-zoom" type="button" disabled={unavailable} onClick={() => zoom(true)} aria-label="Aproximar" title="Aproximar"><Icon name="plus" /></button>
           <button type="button" disabled={unavailable || !homeCamera} onClick={goHome} aria-label="Voltar à vista inicial do projeto" title="Vista inicial">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9" /></svg>
+            <Icon name="home" />
           </button>
-          <button type="button" disabled={unavailable} onClick={() => zoom(false)} aria-label="Afastar" title="Afastar"><span aria-hidden="true">−</span></button>
+          <button className="navigation-zoom" type="button" disabled={unavailable} onClick={() => zoom(false)} aria-label="Afastar" title="Afastar"><Icon name="minus" /></button>
           <button className="navigation-location" data-state={location.status} type="button" disabled={unavailable} onClick={location.locate} aria-label="Minha localização" title={locationTitle} aria-describedby={locationStatusId} aria-busy={location.status === "locating"}>
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" /><path d="M12 2v4m0 12v4M2 12h4m12 0h4" /></svg>
+            <Icon name="locate" />
             {location.status !== "idle" && <span className="navigation-location-dot" aria-hidden="true" />}
           </button>
-          {location.status === "active" && <button type="button" onClick={location.stop} aria-label="Desativar GPS" title="Desativar GPS">×</button>}
+          {location.status === "active" && <button type="button" onClick={location.stop} aria-label="Desativar GPS" title="Desativar GPS"><Icon name="close" /></button>}
         </div>
         <span id={locationStatusId} className="navigation-location-status" role="status">{locationStatus}</span>
       </div>

@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from "react";
 import type { LayerStatus, ProjectConfig, ProjectLayerConfig, QuickScene, WorkspaceSectionId } from "../projects/types";
 import { isTemporalLayer } from "../projects/layerVisibility";
 import { TemporalSelector } from "./TemporalSelector";
+import { Icon } from "./icons";
 import "./LayerPanel.css";
 
 interface Props {
@@ -13,6 +14,9 @@ interface Props {
   onToggle: (id: string) => void;
   onViewExtent?: (id: string) => void;
   onClose: () => void;
+  onCollapse?: () => void;
+  sheetHigh?: boolean;
+  onToggleSheetHeight?: () => void;
   comparing?: boolean;
   onCompare?: () => void;
   onExitComparison?: () => void;
@@ -51,7 +55,7 @@ function sameLayerSet(current: Set<string>, expected: string[]) {
   return current.size === expected.length && expected.every((id) => current.has(id));
 }
 
-export function LayerPanel({ project, statuses, visible, rasterOpacities, onOpacityChange, onToggle, onViewExtent, onClose, scenes, onApplyScene, comparing, onCompare, onExitComparison }: Props) {
+export function LayerPanel({ project, statuses, visible, rasterOpacities, onOpacityChange, onToggle, onViewExtent, onClose, onCollapse, sheetHigh, onToggleSheetHeight, scenes, onApplyScene, comparing, onCompare, onExitComparison }: Props) {
   const [modelHint, setModelHint] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const showSearch = project.panel?.showLayerSearch ?? false;
@@ -89,12 +93,15 @@ export function LayerPanel({ project, statuses, visible, rasterOpacities, onOpac
 
   return (
     <>
+      {onToggleSheetHeight && <button type="button" className="sheet-handle" onClick={onToggleSheetHeight}
+        aria-label={sheetHigh ? "Reduzir painel de camadas" : "Ampliar painel de camadas"}><span aria-hidden="true" /></button>}
       <div className="panel-heading workspace-project">
         <div>
-          <h2>{project.name}</h2>
-          <p className="location">{project.location}</p>
+          <h2>Camadas</h2>
+          <p className="workspace-context">{project.name} — {project.location}</p>
         </div>
-        <button type="button" className="icon-button mobile-only" onClick={onClose} aria-label="Fechar painel de camadas">×</button>
+        {onCollapse && <button type="button" className="panel-icon-button desktop-only" onClick={onCollapse} aria-label="Recolher painel de camadas"><Icon name="chevronLeft" /></button>}
+        <button type="button" className="panel-icon-button mobile-only" onClick={onClose} aria-label="Fechar painel de camadas"><Icon name="close" /></button>
       </div>
       {scenes && scenes.length > 0 &&
         <section className="workspace-scenes" aria-label="Cenas rápidas">
@@ -113,7 +120,8 @@ export function LayerPanel({ project, statuses, visible, rasterOpacities, onOpac
           </div>
         </section>}
       {showSearch && <div className="workspace-search">
-        <label className="workspace-search-label" htmlFor={searchId}>Buscar camada</label>
+        <label className="visually-hidden" htmlFor={searchId}>Buscar camada</label>
+        <Icon name="search" size={16} className="workspace-search-icon" />
         <input
           id={searchId}
           type="search"
@@ -139,7 +147,7 @@ export function LayerPanel({ project, statuses, visible, rasterOpacities, onOpac
               >
                 <span className="workspace-section-title">{section.title}</span>
                 <span className="workspace-section-count" aria-label={`${activeCount} ativas de ${section.layers.length} camadas`}>{activeCount}/{section.layers.length}</span>
-                <svg className="workspace-section-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4" /></svg>
+                <Icon name="chevronDown" size={16} className="workspace-section-chevron" />
               </button>
             </h3>
             <div className="layer-list" id={`workspace-list-${section.id}`} hidden={!open}>
@@ -154,20 +162,18 @@ export function LayerPanel({ project, statuses, visible, rasterOpacities, onOpac
                     {layer.subsection && layer.subsection !== layers[index - 1]?.subsection && <h4 className="layer-subsection">{layer.subsection}</h4>}
                     <div className={`layer-card ${enabled ? "is-active" : ""} ${isModel ? "model-layer-card" : ""}`}>
                       <label className="layer-toggle">
-                        <input type="checkbox" checked={enabled} disabled={comparing && isTemporalLayer(layer)} onChange={() => {
-                          if (isModel) setModelHint(enabled ? null : layer.id);
-                          onToggle(layer.id);
-                        }} />
                         {isModel && <span className="model-layer-icon" aria-hidden="true">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round">
-                            <path d="m12 2 9 5v10l-9 5-9-5V7Z M3 7l9 5 9-5 M12 12v10" />
-                          </svg>
+                          <Icon name="box" size={20} />
                         </span>}
                         <span className="layer-copy">
                           <strong title={embeddedLegend ? "Legenda incorporada ao mapa" : undefined}>{layer.name}</strong>
                           {isModel && <small>Visualização tridimensional</small>}
                           {embeddedLegend && enabled && <small className="embedded-legend-note">Legenda incorporada ao mapa</small>}
                         </span>
+                        <input type="checkbox" className="layer-switch" checked={enabled} disabled={comparing && isTemporalLayer(layer)} onChange={() => {
+                          if (isModel) setModelHint(enabled ? null : layer.id);
+                          onToggle(layer.id);
+                        }} />
                       </label>
                       {enabled && isModel && modelHint === layer.id && <p className="model-navigation-hint" role="status">Use o mouse ou gestos de toque para girar, inclinar e aproximar a vista.</p>}
                       {enabled && statuses[layer.id] === "loading" && <p className="layer-status" role="status">Carregando…</p>}

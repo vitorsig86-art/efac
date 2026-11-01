@@ -1,5 +1,6 @@
 import { ColorMaterialProperty, JulianDate, type Entity } from "cesium";
 import type { VectorPopupConfig } from "../projects/types";
+import { readAndrelandiaPopup } from "./andrelandiaPopup";
 
 const configurations = new WeakMap<Entity, VectorPopupConfig>();
 
@@ -32,10 +33,14 @@ function present(value: unknown): boolean {
   return value !== null && value !== undefined && !(typeof value === "number" && !Number.isFinite(value));
 }
 
-export function readVectorPopup(entity: Entity | undefined, time = JulianDate.now()) {
+export function readVectorPopup(entity: Entity | undefined, time = JulianDate.now()): {
+  title: string;
+  fields: { label?: string; value: string; section?: string }[];
+} | null {
   const config = entity && configurations.get(entity);
   if (!config || !entity || !entity.isShowing) return null;
   const properties = entity.properties?.getValue(time) ?? {};
+  if (config.presentation === "andrelandia") return readAndrelandiaPopup(properties, config);
   const titleValue = config.titleProperty ? properties[config.titleProperty] : undefined;
   const fields = [...config.fields];
   if (config.includeAllFields) {

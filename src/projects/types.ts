@@ -88,6 +88,8 @@ export interface ProjectLayerConfig {
 }
 
 export interface VectorPopupConfig {
+  // Opt in only for macro layers curated in the Andrelândia reference.
+  presentation?: "andrelandia";
   // Opt in to displaying actual source attributes without assuming a schema.
   includeAllFields?: boolean;
   title?: string;
@@ -96,6 +98,10 @@ export interface VectorPopupConfig {
   titleSuffix?: string;
   fields: {
     property: string;
+    section?: string;
+    unit?: "m" | "km" | "ha" | "km²";
+    ratioTo?: string;
+    valueLabels?: Record<string, string>;
     label?: string;
     prefix?: string;
     suffix?: string;

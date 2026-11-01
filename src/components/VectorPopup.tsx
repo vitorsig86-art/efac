@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Cartesian2, Entity, ScreenSpaceEventHandler, ScreenSpaceEventType, type Viewer } from "cesium";
 import { readVectorPopup, resolveVectorPopupSelection } from "../cesium/vectorPopup";
 import { placePopup, type ScreenPoint } from "./popupPosition";
+import { Icon } from "./icons";
 import "./VectorPopup.css";
 
 export function VectorPopup({ viewer }: { viewer: Viewer | null }) {
@@ -54,7 +55,7 @@ export function VectorPopup({ viewer }: { viewer: Viewer | null }) {
     if (!popup || !viewer || viewer.isDestroyed() || !popupRef.current) return;
     const element = popupRef.current;
     const shell = element.closest(".app-shell");
-    const controls = [...(shell?.querySelectorAll<HTMLElement>(".measurement-controls, .navigation-controls, .raster-legend-stack, .map-alert, .cesium-viewer-bottom") ?? [])];
+    const controls = [...(shell?.querySelectorAll<HTMLElement>(".measurement-controls, .navigation-controls, .raster-legend-stack, .map-alert, .cesium-viewer-bottom, .mobile-bar") ?? [])];
     const position = () => {
       if (viewer.isDestroyed()) return;
       const map = viewer.canvas.getBoundingClientRect();
@@ -79,11 +80,14 @@ export function VectorPopup({ viewer }: { viewer: Viewer | null }) {
   }, [popup, anchor, viewer]);
   if (!popup) return null;
   return <section ref={popupRef} className="vector-popup" style={placement ?? { visibility: "hidden" }} aria-label="Informações da feição" aria-live="polite">
-    <button type="button" aria-label="Fechar informações" onClick={() => {
+    <button type="button" className="vector-popup-close" aria-label="Fechar informações" onClick={() => {
       if (viewer && !viewer.isDestroyed()) viewer.selectedEntity = undefined;
       setPopup(null);
-    }}>×</button>
-    <strong>{popup.title}</strong>
-    {popup.fields.map((field, index) => <p key={index}>{field.label && `${field.label}: `}{field.value}</p>)}
+    }}><Icon name="close" /></button>
+    <strong className="vector-popup-title">{popup.title}</strong>
+    {popup.fields.map((field, index) => <div key={index}>
+      {field.section && field.section !== popup.fields[index - 1]?.section && <h4 className="vector-popup-section">{field.section}</h4>}
+      <p>{field.label && <span className="vector-popup-label">{field.label}</span>}<span>{field.value}</span></p>
+    </div>)}
   </section>;
 }
